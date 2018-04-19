@@ -57,7 +57,7 @@ public class SetupMmiaReport extends EsaudeDataExportManager {
 	@Override
 	public String getName() {
 		
-		return "MMIA Report";
+		return "MMIA REPORT";
 	}
 	
 	@Override

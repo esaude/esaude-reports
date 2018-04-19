@@ -43,15 +43,14 @@ public class MmiaPatientBalanceteDataSetEvaluator implements DataSetEvaluator {
 		Long maintaningPatientInPeriod = getUniqResult(evalContext,
 		    MmiaSqlSource.SQL_FIND_MAINTAINING_PATIENTS_BEFORE_PERIOD, startDate, endDate);
 		
-		Location defaultLocation = Context.getLocationService().getDefaultLocation();
-		
 		DataSetRow row = new DataSetRow();
 		row.addColumnValue(new DataSetColumn("NEW_PATIENTS", "NEW_PATIENTS", Long.class), newEnrolledPatient);
 		row.addColumnValue(new DataSetColumn("CHANGED_PATIENTS", "CHANGED_PATIENTS", Long.class), changedPatientByPeriod);
 		row.addColumnValue(new DataSetColumn("MAINTAINING_PATIENTS", "MAINTAINING_PATIENTS", Long.class),
 		    maintaningPatientInPeriod);
 		
-		row.addColumnValue(new DataSetColumn("LOCATION_NAME", "LOCATION_NAME", Long.class), defaultLocation.getName());
+		row.addColumnValue(new DataSetColumn("LOCATION_NAME", "LOCATION_NAME", String.class), Context.getLocationService()
+		        .getDefaultLocation().getName());
 		
 		dataSet.addRow(row);
 		
