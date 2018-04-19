@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openmrs.module.esaudereports.EsaudeDataExportManager;
-import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
-import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
+import org.openmrs.module.esaudereports.reports.mmia.definition.MmiaArtDrugBalanceteDataSetDefinition;
+import org.openmrs.module.esaudereports.reports.mmia.definition.MmiaArtRegimenBalanceteDataSetDefinition;
+import org.openmrs.module.esaudereports.reports.mmia.definition.MmiaPatientBalanceteDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -19,20 +20,38 @@ public class SetupMmiaReport extends EsaudeDataExportManager {
 	
 	@Override
 	public ReportDefinition constructReportDefinition() {
+		
 		ReportDefinition rd = new ReportDefinition();
 		rd.setUuid(getUuid());
 		rd.setName(getName());
 		rd.setDescription(getDescription());
-		rd.addParameters(getParameters());
-		rd.addDataSetDefinition("mmia", Mapped.mapStraightThrough(mmiaDataSetDefinition()));
-		rd.addDataSetDefinition("mmia2", Mapped.mapStraightThrough(mmia2DataSetDefinition()));
+		rd.setParameters(getParameters());
+		
+		// Added dataSet for Drugs Balancets
+		MmiaArtDrugBalanceteDataSetDefinition mmiaDataSetDefinition = new MmiaArtDrugBalanceteDataSetDefinition();
+		mmiaDataSetDefinition.setName("arvDrugDetails");
+		mmiaDataSetDefinition.setParameters(getParameters());
+		rd.addDataSetDefinition("drugBalancete", Mapped.mapStraightThrough(mmiaDataSetDefinition));
+		
+		// Added dataSet for Regimens Balancets
+		MmiaArtRegimenBalanceteDataSetDefinition artRegimenDataSetDefinition = new MmiaArtRegimenBalanceteDataSetDefinition();
+		artRegimenDataSetDefinition.setName("regimemDetails");
+		artRegimenDataSetDefinition.setParameters(getParameters());
+		rd.addDataSetDefinition("regimenBalancete", Mapped.mapStraightThrough(artRegimenDataSetDefinition));
+		
+		// Added dataSet for Patients balancets
+		MmiaPatientBalanceteDataSetDefinition patientBalanceteDataSetDefinition = new MmiaPatientBalanceteDataSetDefinition();
+		patientBalanceteDataSetDefinition.setName("patientDetails");
+		patientBalanceteDataSetDefinition.setParameters(getParameters());
+		rd.addDataSetDefinition("patientBalancete", Mapped.mapStraightThrough(patientBalanceteDataSetDefinition));
+		
 		return rd;
 	}
 	
 	@Override
 	public String getDescription() {
 		
-		return "Test creating MMIA Report";
+		return "Report Balance for ART Drugs, Regimens and Patients Enrolled to ART Program";
 	}
 	
 	@Override
@@ -63,32 +82,12 @@ public class SetupMmiaReport extends EsaudeDataExportManager {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MmiaReport.xls");
 		rd.setName("MMIA");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:10,dataSet:mmia");
+		props.put("repeatingSections",
+		    "sheet:1,row:7,dataSet:drugBalancete|sheet:2,row:7,dataSet:regimenBalancete|sheet:3,row:8-10,dataSet:patientBalancete");
 		props.put("sortWeigth", "5000");
 		rd.setProperties(props);
 		
 		return rd;
-	}
-	
-	private DataSetDefinition mmiaDataSetDefinition() {
-		SqlDataSetDefinition patientDataSetDefinition = new SqlDataSetDefinition();
-		patientDataSetDefinition.setName("mmia");
-		patientDataSetDefinition.setSqlQuery(MmiaSqlSource.SQL_FIND_BALANCETE_BY_PERIOD);
-		
-		patientDataSetDefinition.addParameter(new Parameter("startDate", "", Date.class));
-		patientDataSetDefinition.addParameter(new Parameter("endDate", "", Date.class));
-		
-		return patientDataSetDefinition;
-	}
-	
-	private DataSetDefinition mmia2DataSetDefinition() {
-		SqlDataSetDefinition patientDataSetDefinition = new SqlDataSetDefinition();
-		patientDataSetDefinition.setName("mmia2");
-		patientDataSetDefinition.setSqlQuery("SELECT name as 'DROGA' from drug where name like'%DD%'");
-		patientDataSetDefinition.addParameter(new Parameter("startDate", "", Date.class));
-		patientDataSetDefinition.addParameter(new Parameter("endDate", "", Date.class));
-		
-		return patientDataSetDefinition;
 	}
 	
 	@Override
