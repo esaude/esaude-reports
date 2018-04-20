@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Created by Nicholas Ingosi on 7/27/17.
  */
-@Component
+//@Component
 public class SetupQualityImprovementReport extends EsaudeDataExportManager {
 	
 	@Autowired

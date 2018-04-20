@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Created by Hamilton Mutaquiha on 8/23/17.
  */
-@Component
+//@Component
 public class SetupSaprAprReport extends EsaudeDataExportManager {
 	
 	public static final String MAPPINGS_6_MONTHS = "startDate=${endDate-9m+1d},endDate=${endDate-6m},location=${location}";
@@ -291,7 +291,7 @@ public class SetupSaprAprReport extends EsaudeDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "0.2";
 	}
 	
 	@Override
