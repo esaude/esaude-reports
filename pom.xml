@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.openmrs.maven.parents</groupId>
-        <artifactId>maven-parent-openmrs-module</artifactId>
-        <version>1.1.1</version>
-    </parent>
+	<parent>
+		<groupId>org.openmrs.maven.parents</groupId>
+		<artifactId>maven-parent-openmrs-module</artifactId>
+		<version>1.1.1</version>
+	</parent>
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>esaudereports</artifactId>
@@ -29,12 +29,12 @@
 		<module>omod</module>
 	</modules>
 
-    <properties>
-        <openmrsPlatformVersion>1.11.5</openmrsPlatformVersion>
+	<properties>
+		<openmrsPlatformVersion>1.11.5</openmrsPlatformVersion>
 		<reportingVersion>0.9.9</reportingVersion>
 		<serializationxstreamVersion>0.2.7</serializationxstreamVersion>
 		<calculationVersion>1.1</calculationVersion>
-    </properties>
+	</properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -63,7 +63,7 @@
 
 			<!--End of module dependacy -->
 
-			<!--Start of core openmrs dependancy-->
+			<!--Start of core openmrs dependancy -->
 
 			<!-- Begin OpenMRS core -->
 
@@ -105,6 +105,18 @@
 				<version>${openmrsPlatformVersion}</version>
 				<type>pom</type>
 				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>19.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-math3</artifactId>
+				<version>3.2</version>
 			</dependency>
 
 		</dependencies>
