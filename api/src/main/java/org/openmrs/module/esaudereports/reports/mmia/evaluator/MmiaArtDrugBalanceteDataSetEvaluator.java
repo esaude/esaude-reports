@@ -3,6 +3,7 @@ package org.openmrs.module.esaudereports.reports.mmia.evaluator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.esaudereports.reports.mmia.definition.MmiaArtDrugBalanceteDataSetDefinition;
 import org.openmrs.module.esaudereports.reports.mmia.util.MmiaSqlSource;
@@ -40,6 +41,10 @@ public class MmiaArtDrugBalanceteDataSetEvaluator implements DataSetEvaluator {
 		SqlQueryBuilder query = new SqlQueryBuilder(q);
 		List<Object[]> results = evaluationService.evaluateToList(query, evalContext);
 		
+		if (results.isEmpty()) {
+			this.setEmptyData(dataSet);
+		}
+		
 		for (Object[] o : results) {
 			
 			DataSetRow row = new DataSetRow();
@@ -58,5 +63,22 @@ public class MmiaArtDrugBalanceteDataSetEvaluator implements DataSetEvaluator {
 			dataSet.addRow(row);
 		}
 		return dataSet;
+	}
+	
+	// workaround to prevent NullPointerException when no data found. :-)
+	private void setEmptyData(MapDataSet dataSet) {
+		
+		DataSetRow row = new DataSetRow();
+		row.addColumnValue(new DataSetColumn("FNM", "FNM", String.class), StringUtils.EMPTY);
+		row.addColumnValue(new DataSetColumn("NAME", "NAME", String.class), StringUtils.EMPTY);
+		row.addColumnValue(new DataSetColumn("OUTPUT_UNIT", "OUTPUT_UNIT", Integer.class), StringUtils.EMPTY);
+		row.addColumnValue(new DataSetColumn("INITIAL_BALANCE", "INITIAL_BALANCE", Integer.class), StringUtils.EMPTY);
+		row.addColumnValue(new DataSetColumn("ENTRANCES", "ENTRANCES", Integer.class), StringUtils.EMPTY);
+		row.addColumnValue(new DataSetColumn("EXITS", "EXITS", Integer.class), StringUtils.EMPTY);
+		row.addColumnValue(new DataSetColumn("POSETIVE_ADJUSTS", "POSETIVE_ADJUSTS", Integer.class), StringUtils.EMPTY);
+		row.addColumnValue(new DataSetColumn("NEGATIVE_ADJUSTS", "NEGATIVE_ADJUSTS", Integer.class), StringUtils.EMPTY);
+		row.addColumnValue(new DataSetColumn("CURRENT_BALANCE", "CURRENT_BALANCE", Integer.class), StringUtils.EMPTY);
+		row.addColumnValue(new DataSetColumn("VALIDITY", "VALIDITY", Date.class), StringUtils.EMPTY);
+		dataSet.addRow(row);
 	}
 }
