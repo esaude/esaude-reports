@@ -16,30 +16,30 @@ import org.openmrs.module.reporting.report.util.ReportUtil;
  * Initializes reports
  */
 public class EsaudeReportInitializer implements Initializer {
-
+	
 	protected static final Log log = LogFactory.getLog(EsaudeReportInitializer.class);
-
+	
 	/**
 	 * @see Initializer#started()
 	 */
 	@Override
 	public synchronized void started() {
 		removeOldReports();
-
-		// removeOldMMIAReports();
-		// removeOldFichaDeStockReports();
-
+		
+		removeOldMMIAReports();
+		removeOldFichaDeStockReports();
+		
 		ReportManagerUtil.setupAllReports(EsaudeReportManager.class);
 		ReportUtil.updateGlobalProperty(ReportingConstants.GLOBAL_PROPERTY_DATA_EVALUATION_BATCH_SIZE, "-1");
 	}
-
+	
 	/**
 	 * @see Initializer#stopped()
 	 */
 	@Override
 	public void stopped() {
 	}
-
+	
 	private void removeOldReports() {
 		AdministrationService as = Context.getAdministrationService();
 		// the purpose of this snipet is to allow rapid development other than
@@ -49,56 +49,55 @@ public class EsaudeReportInitializer implements Initializer {
 		String report_resource_quality_improvement_id = "select id from reporting_report_design where uuid='c200541e-72ce-11e7-b45c-507b9dc4c741'";
 		// deleting the resource already loaded
 		as.executeSQL("delete from reporting_report_design_resource where report_design_id =("
-				+ report_resource_quality_improvement_id + ");", false);
+		        + report_resource_quality_improvement_id + ");", false);
 		// deleting the actual designs now
 		as.executeSQL("delete from reporting_report_design where uuid='c200541e-72ce-11e7-b45c-507b9dc4c741';", false);
-
+		
 		// deleting all report requests and managers
 		as.executeSQL("delete from reporting_report_request;", false);
 		as.executeSQL("delete from global_property WHERE property LIKE 'reporting.reportManager%';", false);
-
+		
 		// deleting the actual report definitions from the db
 		as.executeSQL("delete from serialized_object WHERE uuid = 'd1275b54-72ce-11e7-8b29-507b9dc4c741';", false);
 	}
-
+	
 	static void removeOldMMIAReports() {
 		AdministrationService as = Context.getAdministrationService();
-
+		
 		log.warn("Removing MMIA REPORT...");
-
+		
 		String uuiMiaReportDesign = "select id from reporting_report_design where uuid='e6d1b8b2-2dce-11e8-9c34-6fe694d670c1'";
-
-		as.executeSQL(
-				"delete from reporting_report_design_resource where report_design_id =(" + uuiMiaReportDesign + ");",
-				false);
-
+		
+		as.executeSQL("delete from reporting_report_design_resource where report_design_id =(" + uuiMiaReportDesign + ");",
+		    false);
+		
 		// deleting the actual designs now
 		as.executeSQL("delete from reporting_report_design where uuid='e6d1b8b2-2dce-11e8-9c34-6fe694d670c1';", false);
-
+		
 		// deleting all report requests and managers
 		as.executeSQL("delete from reporting_report_request;", false);
 		as.executeSQL("delete from global_property WHERE property LIKE 'reporting.reportManager%';", false);
-
+		
 		// deleting the actual report definitions from the db
 		as.executeSQL("delete from serialized_object WHERE uuid = '070708b2-2dcf-11e8-afc6-cfac93f9ecaa';", false);
 	}
-
+	
 	static void removeOldFichaDeStockReports() {
 		AdministrationService as = Context.getAdministrationService();
 		log.warn("Removing FICHA DE STOCK REPORT ...");
-
+		
 		String uuiFichaDeStockReportDesign = "select id from reporting_report_design where uuid='a7002790-43a0-11e8-a8f4-df673cb13877'";
-
-		as.executeSQL("delete from reporting_report_design_resource where report_design_id =("
-				+ uuiFichaDeStockReportDesign + ");", false);
-
+		
+		as.executeSQL("delete from reporting_report_design_resource where report_design_id =(" + uuiFichaDeStockReportDesign
+		        + ");", false);
+		
 		// deleting the actual designs now
 		as.executeSQL("delete from reporting_report_design where uuid='a7002790-43a0-11e8-a8f4-df673cb13877';", false);
-
+		
 		// deleting all report requests and managers
 		as.executeSQL("delete from reporting_report_request;", false);
 		as.executeSQL("delete from global_property WHERE property LIKE 'reporting.reportManager%';", false);
-
+		
 		// deleting the actual report definitions from the db
 		as.executeSQL("delete from serialized_object WHERE uuid = '62dfb1d4-43a0-11e8-a063-574ef02fa66f';", false);
 	}
