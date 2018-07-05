@@ -4,9 +4,9 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Program;
-import org.openmrs.api.PatientSetService;
 import org.openmrs.module.esaudereports.reporting.utils.ReportUtils;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
@@ -121,7 +121,7 @@ public class CommonCohortLibrary {
 	 * @param answers the answers to include
 	 * @return the cohort definition
 	 */
-	public CohortDefinition hasObs(Concept question, PatientSetService.TimeModifier timeModifier, Concept... answers) {
+	public CohortDefinition hasObs(Concept question, BaseObsCohortDefinition.TimeModifier timeModifier, Concept... answers) {
 		CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
 		cd.setName("has obs between dates");
 		cd.setQuestion(question);
@@ -164,7 +164,7 @@ public class CommonCohortLibrary {
 		cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
 		cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
 		cd.setQuestion(q);
-		cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+		cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
 		cd.setOperator1(RangeComparator.GREATER_THAN);
 		cd.setValue1(lower);
 		cd.setOperator2(RangeComparator.LESS_EQUAL);

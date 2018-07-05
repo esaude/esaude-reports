@@ -3,7 +3,6 @@ package org.openmrs.module.esaudereports.reporting.library.cohort;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
-import org.openmrs.api.PatientSetService;
 import org.openmrs.module.esaudereports.reporting.library.queries.sapr.apr.CohortQueries;
 import org.openmrs.module.esaudereports.reporting.metadata.Dictionary;
 import org.openmrs.module.esaudereports.reporting.metadata.Metadata;
@@ -78,7 +77,7 @@ public class SaprAprCohort {
 		cd.setDescription("Sao pacientes com data de parto actualizado no servico tarv. Repare que os parametros 'Data Inicial' e 'Data Final' refere-se a data de parto e nao data de registo (actualizacao)");
 		cd.setQuestion(Dictionary.getConcept(Dictionary.DATE_OF_BIRTH));
 		cd.setEncounterTypeList(Arrays.asList(ADULTO_SEGUIMENTO, ADULTO_INICIAL_A));
-		cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+		cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
 		cd.addParameter(new Parameter("location", "Location", Location.class));
 		cd.setOperator1(RangeComparator.GREATER_EQUAL);
 		cd.addParameter(new Parameter("startDate", "Data Inicial", Date.class));
@@ -95,7 +94,7 @@ public class SaprAprCohort {
 		cd.setDescription("São pacientes que iniciaram TARV por serem lactantes. Conceito 6334");
 		cd.setQuestion(Dictionary.getConcept(Dictionary.CRITERIA_FOR_ART_START));
 		cd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata._EncounterType.ADULTO_SEGUIMENTO_6)));
-		cd.setTimeModifier(PatientSetService.TimeModifier.FIRST);
+		cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.FIRST);
 		cd.setOperator(SetComparator.IN);
 		cd.setValueList(Arrays.asList(Dictionary.getConcept(Dictionary.BREASTFEEDING)));
 		cd.addParameter(new Parameter("location", "Unidade Sanitaria", Location.class));
@@ -138,9 +137,9 @@ public class SaprAprCohort {
 		cd.addSearch("hasEncounter", ReportUtils.map(
 		    cohortLibrary.hasEncounter(CoreUtils.getEncounterType(Metadata._EncounterType.ADULTO_SEGUIMENTO_6)),
 		    "onOrAfter=${startDate},onOrBefore=${endDate},location=${location}"));
-		cd.addSearch("hasObs", ReportUtils.map(
-		    cohortLibrary.hasObs(Dictionary.getConcept(Dictionary.BREASTFEEDING), PatientSetService.TimeModifier.LAST),
-		    "onOrAfter=${startDate},onOrBefore=${endDate}"));
+		cd.addSearch("hasObs",
+		    ReportUtils.map(cohortLibrary.hasObs(Dictionary.getConcept(Dictionary.BREASTFEEDING),
+		        BaseObsCohortDefinition.TimeModifier.LAST), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 		cd.setCompositionString("hasObs AND hasEncounter");
 		
 		return cd;
@@ -276,7 +275,7 @@ public class SaprAprCohort {
 		    cohortLibrary.hasEncounter(adultoSeguimento, pediatriaSeguimento, farmacia),
 		    "onOrAfter=${startDate},onOrBefore=${endDate},location=${location}"));
 		cd.addSearch("hasObs", ReportUtils.map(
-		    cohortLibrary.hasObs(artManagement, PatientSetService.TimeModifier.ANY, start, transferedFrom),
+		    cohortLibrary.hasObs(artManagement, BaseObsCohortDefinition.TimeModifier.ANY, start, transferedFrom),
 		    "onOrAfter=${startDate},onOrBefore=${endDate}"));
 		cd.setCompositionString("hasObs AND hasEncounters");
 		
@@ -310,7 +309,7 @@ public class SaprAprCohort {
 		cd.addSearch("hasEncounters", ReportUtils.map(
 		    cohortLibrary.hasEncounter(adultoSeguimento, pediatriaSeguimento, farmacia),
 		    "onOrAfter=${startDate},onOrBefore=${endDate},location=${location}"));
-		cd.addSearch("hasObs", ReportUtils.map(cohortLibrary.hasObs(artStartDAte, PatientSetService.TimeModifier.ANY),
+		cd.addSearch("hasObs", ReportUtils.map(cohortLibrary.hasObs(artStartDAte, BaseObsCohortDefinition.TimeModifier.ANY),
 		    "onOrAfter=${startDate},onOrBefore=${endDate}"));
 		cd.setCompositionString("hasObs AND hasEncounters");
 		
@@ -563,7 +562,7 @@ public class SaprAprCohort {
 		cd.setDescription("São pacientes cujo o ultimo medicamento ARV levantado na farmacia pertence a segunda linha de ARVs");
 		cd.setQuestion(Dictionary.getConcept(Dictionary.REGIMEN));
 		cd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata._EncounterType.FARMACIA_18)));
-		cd.setTimeModifier(PatientSetService.TimeModifier.LAST);
+		cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.LAST);
 		cd.setOperator(SetComparator.IN);
 		cd.setValueList(Arrays.asList(drug1, drug2, drug3, drug4, drug5, drug6, drug7, drug8, drug9, drug10, drug11));
 		cd.addParameter(new Parameter("location", "Unidade Sanitaria", Location.class));
@@ -784,7 +783,8 @@ public class SaprAprCohort {
 		cd.addParameter(new Parameter("location", "Location", Location.class));
 		cd.addSearch("hasEncounters", ReportUtils.map(cohortLibrary.hasEncounter(adultoSeguimento, pediatriaSeguimento),
 		    "onOrAfter=${startDate},onOrBefore=${endDate},location=${location}"));
-		cd.addSearch("hasObs", ReportUtils.map(cohortLibrary.hasObs(tbTreatment, PatientSetService.TimeModifier.ANY, yes),
+		cd.addSearch("hasObs", ReportUtils.map(
+		    cohortLibrary.hasObs(tbTreatment, BaseObsCohortDefinition.TimeModifier.ANY, yes),
 		    "onOrAfter=${startDate},onOrBefore=${endDate}"));
 		
 		cd.setCompositionString("hasObs AND hasEncounters");
@@ -806,7 +806,7 @@ public class SaprAprCohort {
 		cd.setQuestion(Dictionary.getConcept(Dictionary.TB_TREATMENT_START_DATE));
 		cd.setEncounterTypeList(Arrays.asList(TUBERCULOSE_LIVRO, ADULTO_SEGUIMENTO, PEDIATRIA_SEGUIMENTO,
 		    TUBERCULOSE_RASTREIO, TUBERCULOSE_PROCESSO));
-		cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+		cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
 		cd.addParameter(new Parameter("location", "Location", Location.class));
 		cd.setOperator1(RangeComparator.GREATER_EQUAL);
 		cd.addParameter(new Parameter("startDate", "Data Inicial", Date.class));
@@ -845,7 +845,8 @@ public class SaprAprCohort {
 		cd.addSearch("hasEncounters", ReportUtils.map(
 		    cohortLibrary.hasEncounter(adultoSeguimento, pediatriaSeguimento, tBProcess),
 		    "onOrAfter=${startDate},onOrBefore=${endDate},location=${location}"));
-		cd.addSearch("hasObs", ReportUtils.map(cohortLibrary.hasObs(tbTreatment, PatientSetService.TimeModifier.ANY, start),
+		cd.addSearch("hasObs", ReportUtils.map(
+		    cohortLibrary.hasObs(tbTreatment, BaseObsCohortDefinition.TimeModifier.ANY, start),
 		    "onOrAfter=${startDate},onOrBefore=${endDate}"));
 		cd.setCompositionString("hasObs AND hasEncounters");
 		

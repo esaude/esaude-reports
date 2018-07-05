@@ -29,9 +29,9 @@
 	</modules>
 
 	<properties>
-		<openmrsPlatformVersion>1.11.5</openmrsPlatformVersion>
-		<reportingVersion>0.9.9</reportingVersion>
-		<serializationxstreamVersion>0.2.7</serializationxstreamVersion>
+		<openmrsPlatformVersion>2.0.5</openmrsPlatformVersion>
+		<reportingVersion>1.13.0</reportingVersion>
+		<serializationxstreamVersion>0.2.10</serializationxstreamVersion>
 		<calculationVersion>1.1</calculationVersion>
 	</properties>
 
